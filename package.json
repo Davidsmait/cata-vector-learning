@@ -1,0 +1,31 @@
+{
+  "name": "cata-vector-learning",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sandbox para aprender índices SQL, embeddings, pgvector y HNSW — preparación para construir Cata (tutora RAG del roadmap de café)",
+  "scripts": {
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:nuke": "docker compose down -v",
+    "db:logs": "docker compose logs -f postgres",
+    "db:psql": "docker compose exec postgres psql -U cata -d cata_learning",
+    "db:ping": "tsx src/db-ping.ts",
+    "seed:classic": "tsx src/seed-classic.ts",
+    "query:no-index": "tsx src/query-no-index.ts",
+    "query:with-index": "tsx src/query-with-index.ts",
+    "query:gotchas": "tsx src/query-gotchas.ts"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
