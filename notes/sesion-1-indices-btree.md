@@ -119,6 +119,52 @@ Execution Time: 0.484 ms
 
 - `[idea-post]` La métrica que **sí** escala obvio aunque la tabla sea chica es **Buffers (páginas leídas)**. 119 páginas para encontrar 1 fila es la evidencia visible incluso a esta escala. El post puede usar esto para no depender de tablas gigantes para mostrar el contraste.
 
+### Demo 2 — Crear índice B-tree y comparar
+
+```
+Plan SIN índice:
+Seq Scan on customers  (cost=0.00..244.00 rows=1 width=28) (actual time=0.245..0.494 rows=1 loops=1)
+  Filter: (email = 'mr.ziemann@gmail.com'::text)
+  Rows Removed by Filter: 9999
+  Buffers: shared hit=119
+Planning Time: 0.017 ms
+Execution Time: 0.498 ms
+
+CREATE INDEX idx_customers_email ON customers(email);
+✓ Índice creado en 25 ms. Tamaño: 448 kB.
+
+Plan CON índice:
+Index Scan using idx_customers_email on customers  (cost=0.29..8.30 rows=1 width=28) (actual time=0.005..0.005 rows=1 loops=1)
+  Index Cond: (email = 'mr.ziemann@gmail.com'::text)
+  Buffers: shared hit=3
+Planning Time: 0.019 ms
+Execution Time: 0.009 ms
+```
+
+**Comparación final:**
+- Tipo: Seq Scan → Index Scan
+- Filas descartadas: 9999 → 0
+- Páginas leídas: 119 → 3 (**39.7× menos**)
+- Execution Time: 0.498 ms → 0.009 ms (**55.3× más rápido**)
+
+- `[idea-post]` **La diferencia entre `Filter` y `Index Cond`** es la pista visible más limpia de si tu índice funciona. Filter = "lee y después decide", Index Cond = "usa el índice para navegar y solo lee lo que califica". Esta diferencia de palabra en EXPLAIN ANALYZE merece su propio recuadro en el post — cuando un dev depura performance, mirar esa línea le dice todo.
+
+- `[idea-post]` **El índice ocupa 448 kB en un table de ~1.2 MB** — overhead ~37%. Vale para el post mencionar el costo real: los índices no son gratis. Multiplica si tienes 5 índices.
+
+- `[output]` Bug menor en el script: la query usó `indexrelid` en `pg_indexes`, pero esa columna está en `pg_index` (sin "s"). Fix: usar `pg_class.oid` con JOIN sobre `pg_class.relname = indexname`. **Idea de sidebar**: en Postgres hay vistas (`pg_indexes`, `pg_tables`) y catálogos crudos (`pg_index`, `pg_class`) con nombres parecidos pero campos distintos — la confusión es endémica.
+
+- `[idea-post]` **Variación entre corridas**: Demo 1 dio 0.484 ms, Demo 2 sin índice dio 0.498 ms. Misma query, mismo data, mismo cache. Las mediciones tienen ruido natural — el post debería normalizar promediando N corridas (ej. 100) para que el contraste sea estadísticamente honesto.
+
+- `[confusión]` David preguntó **qué son `pg_indexes`, `pg_index`, `pg_class`** y por qué tienen nombres tan parecidos. Pregunta excelente que abre el tema del **system catalog** — algo que mid-level devs raramente conocen pero que es la diferencia entre "saber Postgres" y "saber Postgres profundo".
+
+- `[analogía]` **Postgres se conoce a sí mismo: el registro de hotel.** Para saber quién duerme en el cuarto 304 no entras al cuarto — consultas el registro de la recepción. Postgres hace lo mismo: para saber qué índices existen no inspecciona disco, consulta sus tablas internas. **Metadata como data.** _(Funcionó bien.)_
+
+- `[idea-post]` **Sidebar muy útil para el post**: "Postgres como base de datos sobre sí misma". Explicar las dos capas del catálogo (tablas crudas `pg_*` singular vs vistas amigables `pg_*` plural), la confusión típica entre `pg_index` y `pg_indexes` (la "s" cambia todo), y `pg_class` como el rey universal que contiene oids de todas las relaciones. Cerrar con `information_schema` como alternativa portable.
+
+- `[idea-post]` **Tabla mental para el post**: singular = tabla cruda (`pg_index`, `pg_table` ¡no existe!), plural = vista amigable (`pg_indexes`, `pg_tables`). `pg_class` rompe el patrón pero es el más importante.
+
+- `[idea-post]` **Conectar explícitamente con Cata** en este punto del post: cuando llegues a HNSW, vas a inspeccionar `pg_indexes` para confirmar que tu índice vectorial quedó, `pg_extension` para verificar `vector`, `pg_stat_user_indexes` para ver si tu índice se usa o está zombie. El system catalog deja de ser trivia y se vuelve herramienta de debugging.
+
 ## Preguntas abiertas para próximas sesiones
 
 _(Vacío por ahora — se llena cuando surjan preguntas que no resolvemos en esta sesión.)_

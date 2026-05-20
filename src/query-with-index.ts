@@ -215,12 +215,12 @@ async function main() {
   // 6) Bonus: mostrar todos los índices ahora existentes
   divider();
   const indexes = await q<{ indexname: string; size: string }>(
-    `SELECT indexname,
-            pg_size_pretty(pg_relation_size(indexrelid)) AS size
-     FROM pg_indexes
-     JOIN pg_class ON pg_class.relname = indexname
-     WHERE tablename = 'customers'
-     ORDER BY indexname`
+    `SELECT i.indexname,
+            pg_size_pretty(pg_relation_size(c.oid)) AS size
+     FROM pg_indexes i
+     JOIN pg_class c ON c.relname = i.indexname
+     WHERE i.tablename = 'customers'
+     ORDER BY i.indexname`
   );
   console.log(pc.bold(`Índices ahora en customers (${indexes.length}):`));
   for (const idx of indexes) {
