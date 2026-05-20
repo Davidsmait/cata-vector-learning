@@ -1,12 +1,32 @@
 # cata-vector-learning
 
-Sandbox para aprender, con código real y métricas en pantalla, los cimientos
-técnicos detrás de **Cata** — la tutora conversacional del roadmap de café de
-[davidblog](../davidblog). Spec de Cata en
-[`davidblog/docs/cata-spec.md`](../davidblog/docs/cata-spec.md).
+> **Learning in public.** Este repo es mi sandbox personal para aprender
+> índices SQL, embeddings, pgvector y HNSW desde cero — con la motivación de
+> construir [Cata](https://davidsanluisaguirre.com), una tutora conversacional
+> de IA para mi roadmap de café de especialidad.
+>
+> El código está pensado para ejecutarse paso a paso, con `EXPLAIN ANALYZE`
+> impreso en consola y comparaciones lado a lado. La carpeta `notes/` contiene
+> apuntes **candid** de cada sesión — incluye preguntas, confusiones reales y
+> analogías que probé. Es evidencia honesta del proceso, no documentación
+> pulida.
+>
+> Resultado planeado: blog post en
+> [davidsanluisaguirre.com](https://davidsanluisaguirre.com) sintetizando todo
+> el aprendizaje.
 
-Esto **no es** un proyecto de producción. Es un campo de pruebas con
-`EXPLAIN ANALYZE` impreso en consola.
+## Stack y motivación
+
+Sandbox de **Node 22 + TypeScript + Postgres 16 + pgvector**, corriendo
+localmente vía Docker. Construido en sesiones de 1-2 horas siguiendo la
+estructura de las 5 sesiones abajo. Cero servicios pagos, cero cuentas
+externas — todo corre en tu Mac.
+
+**Por qué este repo existe:** estaba diseñando el spec de Cata en otra
+sesión y me di cuenta de que estaba aceptando recomendaciones de stack
+(pgvector, HNSW, contrastive learning) sin entender los fundamentos. Pausé
+el spec para llenar esos huecos con código y mediciones reales. Cuando
+termine, vuelvo al spec con criterio propio.
 
 ## Las 5 sesiones
 
