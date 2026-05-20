@@ -165,6 +165,16 @@ Execution Time: 0.009 ms
 
 - `[idea-post]` **Conectar explícitamente con Cata** en este punto del post: cuando llegues a HNSW, vas a inspeccionar `pg_indexes` para confirmar que tu índice vectorial quedó, `pg_extension` para verificar `vector`, `pg_stat_user_indexes` para ver si tu índice se usa o está zombie. El system catalog deja de ser trivia y se vuelve herramienta de debugging.
 
+- `[confusión]` David tuvo **mucha confusión real** con la primera explicación del catálogo. Preguntó específicamente: qué significa la "o" en oid, qué significa "rel" (creía que podía ser "real"), qué es relkind, por qué hay tablas con nombres tan parecidos, qué es `indexrelid` y por qué no puede acceder desde la vista. Señal crítica: **la etimología de los nombres del catálogo es un bloqueo cognitivo grande para mid-level devs no expertos en DBs**. El post no puede asumir conocimiento de "relation" como sinónimo de tabla.
+
+- `[idea-post]` **Sección obligatoria en el post: "Etimología del catálogo".** Tabla con: OID = Object Identifier, REL = Relation (no Real), KIND = tipo. Y la regla mental: singular = tabla cruda, plural = vista amigable. Sin esta sección de claridad terminológica, el resto de las explicaciones de `pg_class`/`pg_index`/`pg_indexes` no aterrizan.
+
+- `[idea-post]` **Diagrama ASCII / SVG obligatorio** del catálogo: `pg_class` en el centro con flechas saliendo a `pg_index`, `pg_attribute`, `pg_namespace`, mostrando que todo se enlaza por OIDs. Debe haber filas reales del ejemplo (oid 16389 → customers, etc.) — no solo abstracciones.
+
+- `[idea-post]` **Side-by-side de "misma pregunta, dos formas"** funciona muy bien: pregunta humana ("¿qué índices tiene customers?") y mostrar la query cruda vs la query con vista, con resultados reales. Es lo que más cierra el concepto de "dos capas".
+
+- `[idea-post]` Para el post final: **el bug real del script** + su fix es un ejemplo concreto perfecto. Mostrar el bug, mostrar el fix, explicar por qué falló desde el modelo mental del catálogo. Es 10× más memorable que una explicación abstracta.
+
 ## Preguntas abiertas para próximas sesiones
 
 _(Vacío por ahora — se llena cuando surjan preguntas que no resolvemos en esta sesión.)_
