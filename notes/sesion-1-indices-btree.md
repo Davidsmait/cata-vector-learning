@@ -51,11 +51,73 @@ Convenciones de tags:
 
 - `[analogía]` **Embeddings = "GPS pero para significado"**. (lat, lon) son 2 números que mapean cada lugar de la Tierra; lugares cercanos = números cercanos. Un embedding de 384 dimensiones hace lo mismo pero mapea "espacio de significados"; textos parecidos = vectores cercanos. _(Por confirmar si aterriza.)_
 
-- `[analogía]` **Métricas de distancia = dos flechas saliendo del origen**. Distancia coseno = qué tanto **apuntan en la misma dirección** (el ángulo entre ellas). Distancia euclidiana = qué tan **lejos están las puntas**. Para embeddings, lo que importa es la dirección, no la magnitud — por eso coseno es el default en la industria. _(Por confirmar si aterriza.)_
+- `[analogía]` **Métricas de distancia = dos flechas saliendo del origen**. Distancia coseno = qué tanto **apuntan en la misma dirección** (el ángulo entre ellas). Distancia euclidiana = qué tan **lejos están las puntas**. Para embeddings, lo que importa es la dirección, no la magnitud — por eso coseno es el default en la industria. **Confirmada**: David la parafraseó perfecto: *"nuestro objetivo es encontrar que las flechas apunten al mismo lado sin importar la distancia a la que estén"*. Esta analogía va al post tal cual.
+
+- `[modelo-mental]` David, sin guía adicional, internalizó coseno como **"apuntan al mismo lado sin importar la distancia"**. Es la forma más limpia de comunicar la intuición — más simple que la mía. Robarla para el post.
+
+- `[confusión]` David preguntó **"¿de dónde sacaste el número 384?"** — el número de dimensiones del embedding. Pregunta totalmente válida. El post tiene que cubrir explícitamente: por qué los modelos tienen N dimensiones, que no es algo que tú elijas (es propiedad fija del modelo entrenado), y comparar 384 (MiniLM) vs 1024 (Voyage) vs 1536 (OpenAI) como tabla.
+
+- `[confusión]` David preguntó **qué representan los dos números de las coordenadas GPS** (lat y lon). Señal importante: la analogía GPS funciona conceptualmente, pero **no asumir que el lector tiene mapa mental claro de latitud/longitud**. En el post, explicar los dos números explícitamente la primera vez. Posiblemente reforzar con un visual.
+
+- `[idea-post]` En el post final, sección de embeddings, **abrir con esta tabla comparativa de dimensiones**: MiniLM 384, BERT-base 768, Voyage-3-lite 1024, OpenAI text-embedding-3-small 1536. Aclarar: "tu modelo decide el tamaño, no tú". Más dims = potencialmente más capacidad expresiva, pero también más espacio en disco y más tiempo de cómputo. 384 es sweet spot para aprender y para muchos casos reales.
+
+- `[confusión]` David preguntó **"¿cómo aprende el modelo a poner significados parecidos cerca?"**. Pregunta de oro — la que más tutoriales evaden. El post final tiene que responderla bien, no es opcional.
+
+- `[analogía]` **Ligas y resortes en un cuarto vacío.** Cada texto es una esfera. Pares parecidos → liga elástica que las jala. Pares no parecidos → resorte que las separa. Después de millones de iteraciones, el sistema llega a equilibrio: relacionados juntos, no relacionados lejos. **El modelo no son las esferas — es la función que decide dónde poner cada esfera.** _(Por confirmar si aterriza.)_
+
+- `[idea-post]` Punto que sorprende y vale incluir: **los pares de entrenamiento no se etiquetan a mano**. Se obtienen con trucos automáticos: traducciones (mismo significado, distintos idiomas), pares Q&A de Stack Overflow/Reddit, oraciones contiguas del mismo párrafo, título+cuerpo de noticias. Y los "no parecidos" se generan tomando textos random de documentos distintos.
+
+- `[idea-post]` **La generalización es la magia real**, no la memorización. El modelo nunca vio "mi máquina italiana tira ristrettos cortos", pero la coloca cerca de otros textos cafeteros porque internalizó patrones léxicos. Esto debe quedar muy claro en el post — distingue un modelo de IA de un simple índice de palabras.
+
+- `[idea-post]` **Nombre técnico para soltar una sola vez** en el post: "contrastive learning". No abundar; solo darle al lector el término por si lo encuentra en otros artículos.
+
+- `[decisión]` **No entrenamos modelo desde cero** — usamos uno pre-entrenado (MiniLM de Microsoft Research). Entrenar uno cuesta millones de dólares en GPUs. El post debe aclarar esto explícitamente para que el lector no se asuste pensando que va a tener que entrenar algo.
+
+- `[confusión]` Después de toda la explicación de embeddings (GPS + flechas + ligas/resortes + contrastive learning), David dijo literal **"masomenos pero entiendo que no hay que profundizar aún mucho"**. Señal importante: la primera pasada **no aterrizó al 100%**, y David lo está reconociendo honestamente. El post final tiene que **dedicarle más espacio a esta sección** del que parece justificarse en una primera lectura. La Sesión 2 debe abrir reforzando estos conceptos con código antes de avanzar.
+
+- `[confusión]` David preguntó **qué guarda físicamente el índice**: ¿solo el campo indexado y el id, o el registro completo? Pregunta perfecta porque revela que el modelo mental "el índice es un atajo" se queda corto sin entender el **heap vs índice como dos archivos físicos separados**.
+
+- `[idea-post]` **Diagrama obligatorio del heap + índice como dos estructuras separadas** con flechas (CTID) que apuntan de una a otra. Sin este diagrama, el resto del post no se sostiene. Posiblemente animado/SVG en el post final.
+
+- `[confusión]` David preguntó **qué significa "logarítmicamente"**. Marca el nivel exacto del lector: no asume background de matemáticas universitarias. El post debe explicar logaritmo en una línea simple antes de soltarlo.
+
+- `[analogía]` **Logaritmo ≈ cuántos dígitos tiene un número.** log_10(1000) = 3 (mil tiene 4 dígitos, aproximadamente 3 + 1). log_10(1,000,000) = 6. Crecimiento lentísimo. _(Por confirmar si aterriza.)_
+
+- `[idea-post]` **Tabla de complejidades como guía mental rápida** en el post: O(1) constante, O(log N) logarítmica, O(N) lineal, O(N²) cuadrática, O(2^N) exponencial. Solo necesita ser un párrafo, no un curso de Big-O.
+
+- `[confusión]` Después de toda la explicación de B-tree y mientras estaba listo para seedear, David **volvió a preguntar "¿qué es un embedding?"** — la versión más básica posible. Señal contundente: a pesar de GPS + flechas + ligas/resortes + contrastive learning, **el concepto aún no se consolidó**. Mid-level dev haciendo metacognición correcta — está cerrando el loop antes de continuar.
+
+- `[analogía]` **Embedding = RGB pero para significados.** RGB son 3 números que codifican una apariencia visual; embedding son 384 números que codifican significado. Colores con RGB parecido se ven parecido; textos con embedding parecido significan parecido. **Es la analogía más concreta** y la única que David ya conocía de antes (CSS) — probablemente la que finalmente aterrice. _(Por confirmar.)_
+
+- `[idea-post]` **Mover RGB al inicio** de la sección de embeddings en el post final. GPS y flechas vienen después como refuerzo. La definición debería abrir con: "un embedding es una lista de números que representa contenido, donde contenidos parecidos producen listas parecidas — como RGB pero para significados".
+
+- `[idea-post]` **Tabla concreta con vectores reales** en el post: 3 textos del corpus + sus primeros 4-5 valores del vector, mostrando que los relacionados tienen números parecidos. Hasta que el lector no ve los números reales, el concepto no se cierra del todo.
+
+- `[pregunta-abierta]` Si después de Sesión 2 (cuando vea los números reales) David sigue diciendo "masomenos", reconsiderar la estructura del post: quizá embeddings necesitan una sección entera con visualización 2D (UMAP) antes de tocar pgvector.
 
 ## Outputs / evidencias capturadas
 
-_(EXPLAIN ANALYZE de cada experimento se pega aquí, tal cual sale en consola.)_
+### Demo 1 — Query SIN índice (Seq Scan)
+
+Cliente objetivo: id 5001, Mr. Ryan Kling, `mr.ziemann@gmail.com`. Query: `SELECT id, name, city FROM customers WHERE email = $1`.
+
+```
+Seq Scan on customers  (cost=0.00..244.00 rows=1 width=28) (actual time=0.221..0.478 rows=1 loops=1)
+  Filter: (email = 'mr.ziemann@gmail.com'::text)
+  Rows Removed by Filter: 9999
+  Buffers: shared hit=119
+Planning Time: 0.017 ms
+Execution Time: 0.484 ms
+```
+
+**Métricas a destacar en el post**:
+- `Execution Time: 0.484 ms` — rápido en absoluto, pero…
+- `Rows Removed by Filter: 9999` — descartó el 99.99% del trabajo
+- `Buffers: shared hit=119` ≈ 952 KB paseados para encontrar una fila de ~50 bytes (ratio de desperdicio ~19,000×)
+
+- `[idea-post]` **Ser honesto en el post sobre la escala**: 0.484 ms no asusta a nadie. La razón por la cual los índices son esenciales y no opcionales se revela al escalar: 10K→0.5ms, 1M→50ms, 100M→5s. La tabla de proyección debe estar en el post para que el lector entienda por qué el snapshot de hoy no es donde está la moraleja.
+
+- `[idea-post]` La métrica que **sí** escala obvio aunque la tabla sea chica es **Buffers (páginas leídas)**. 119 páginas para encontrar 1 fila es la evidencia visible incluso a esta escala. El post puede usar esto para no depender de tablas gigantes para mostrar el contraste.
 
 ## Preguntas abiertas para próximas sesiones
 
