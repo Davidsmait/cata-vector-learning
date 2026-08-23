@@ -45,3 +45,28 @@ viéndolos con código real.
 - Correr `npm run embed:demo` en la Mac de David (con internet real) y confirmar mismos números.
 - Ver un embedding completo (los 384) impreso, no solo los primeros 8.
 - Sesión 3: meter estos vectores a pgvector + índice HNSW y comparar búsqueda exacta vs aproximada.
+
+## Repaso de código + embeddings a fondo (22-ago, parte 2)
+
+- `[aha]` David resumió bien la Sesión 2: texto → vectores, y dada una frase buscar el vector
+  más cercano. Confirmó también que TANTO la pregunta como las lecciones se embeben, con el
+  MISMO modelo (única forma de compararlos en el mismo espacio).
+- `[confusión→aha]` `db.ts` = conexión compartida a Postgres (analogía "conmutador telefónico
+  del edificio"): escribir la conexión UNA vez y reusarla en los 5 scripts. Principio de
+  encapsular/DRY.
+- `[confusión→aha]` Por qué el embedding corre SIN contenedor: `embeddings-demo.ts` no importa
+  `db.ts`, corre en memoria. Analogía "dos mundos": la FÁBRICA de embeddings (modelo, en Node)
+  vs la BODEGA (Postgres). Sesión 2 = solo la fábrica.
+- `[confusión]` "¿por qué varían los números (0.8 vs 0.9)?" → Los embeddings son DETERMINISTAS:
+  mismo texto + mismo modelo = mismos 384 números siempre, sin azar. 0.899 es "arriba de 0.8" Y
+  "casi 0.9" a la vez. Un párrafo puntúa más que un fragmento de 4 palabras (más contexto).
+- `[aha]` Coseno = medida de ALINEACIÓN (qué tanto apuntan al mismo lado), rango -1 a 1;
+  "porcentaje de misma dirección"; nunca pasa de 1. Puntaje alto = significado más parecido =
+  más relevante.
+- `[aha]` Lecciones se embeben UNA vez y se GUARDAN; la pregunta se embebe en cada búsqueda.
+  ¿Dónde guardarlas? En la base (pgvector). → Puente natural a Sesión 3.
+- `[decisión]` Reorganización de `src/` por sesión para no confundir los dos mundos:
+  `src/sesion-1-indices/` (requieren contenedor) y `src/sesion-2-embeddings/` (no). Los alias
+  `npm run ...` no cambiaron. Reorg SIN commitear aún (pendiente que David revise el diff).
+- `[idea-post]` La analogía "dos mundos / fábrica vs bodega" fue lo que por fin aclaró por qué
+  generar embeddings no necesita base de datos. Va al post.
