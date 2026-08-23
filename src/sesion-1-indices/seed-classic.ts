@@ -8,7 +8,7 @@
 
 import pc from "picocolors";
 import { faker } from "@faker-js/faker";
-import { pool, q } from "./lib/db.ts";
+import { pool, q } from "../lib/db.ts";
 
 const TOTAL_ROWS = 10_000;
 

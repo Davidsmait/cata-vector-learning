@@ -9,7 +9,7 @@
 //   C. Índice compuesto consultado por la columna equivocada (leftmost prefix)
 
 import pc from "picocolors";
-import { pool, q, explain } from "./lib/db.ts";
+import { pool, q, explain } from "../lib/db.ts";
 
 function box(title: string) {
   const line = "═".repeat(60);

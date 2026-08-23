@@ -6,7 +6,7 @@
 //      una vez para tenerla lista para Sesión 3, aunque Sesión 1 no la use.
 
 import pc from "picocolors";
-import { pool, q } from "./lib/db.ts";
+import { pool, q } from "../lib/db.ts";
 
 async function main() {
   console.log(pc.dim("→ Conectando a Postgres..."));

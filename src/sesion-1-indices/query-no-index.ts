@@ -4,7 +4,7 @@
 // Esperado: Seq Scan, Postgres revisa las 10K filas para encontrar 1.
 
 import pc from "picocolors";
-import { pool, q, explain } from "./lib/db.ts";
+import { pool, q, explain } from "../lib/db.ts";
 
 function box(title: string) {
   const line = "═".repeat(60);
