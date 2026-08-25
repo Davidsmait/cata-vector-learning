@@ -56,4 +56,23 @@ for (const leccion of lecciones) {
 }
 
 console.log(`✓ ${lecciones.length} lecciones insertadas`);
+
+const pregunta = "por qué mi espresso sale ácido";
+const vq = toPg(await vec("query", pregunta));
+
+const filas = await q<{ id: number; texto: string; similitud: number }>(
+  `SELECT id, texto, 1 - (embedding <=> $1) AS similitud
+     FROM coffee_chunks
+     ORDER BY embedding <=> $1
+     LIMIT 3`,
+  [vq],
+);
+
+console.log(`\nPREGUNTA: "${pregunta}"\n`);
+filas.forEach((f, i) =>
+  console.log(
+    `  ${i + 1}. ${Number(f.similitud).toFixed(3)}  ${f.texto.slice(0, 60)}...`,
+  ),
+);
+
 await pool.end();
