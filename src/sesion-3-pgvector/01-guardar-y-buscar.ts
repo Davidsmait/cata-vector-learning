@@ -1,5 +1,5 @@
 //  Sesión 3 — Guardar y buscar en pgvector. Paso 1
-import { pool, q } from "../lib/db.ts";
+import { pool, q, explain } from "../lib/db.ts";
 import { pipeline } from "@xenova/transformers";
 
 const embed = await pipeline(
@@ -74,5 +74,14 @@ filas.forEach((f, i) =>
     `  ${i + 1}. ${Number(f.similitud).toFixed(3)}  ${f.texto.slice(0, 60)}...`,
   ),
 );
+
+console.log(
+  '\n─── EXPLAIN (fíjate en "Seq Scan": todavía no hay índice) ───\n',
+);
+const plan = await explain(
+  `SELECT id FROM coffee_chunks ORDER BY embedding <=> $1 LIMIT 3`,
+  [vq],
+);
+for (const line of plan) console.log(line);
 
 await pool.end();
