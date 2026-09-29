@@ -16,7 +16,8 @@
     "query:with-index": "tsx src/sesion-1-indices/query-with-index.ts",
     "query:gotchas": "tsx src/sesion-1-indices/query-gotchas.ts",
     "embed:demo": "tsx src/sesion-2-embeddings/embeddings-demo.ts",
-    "s3:paso1": "tsx src/sesion-3-pgvector/01-guardar-y-buscar.ts"
+    "s3:paso1": "tsx src/sesion-3-pgvector/01-guardar-y-buscar.ts",
+    "s3:paso2": "tsx src/sesion-3-pgvector/02-indice-hnsw.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.3.0",
